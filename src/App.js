@@ -1,30 +1,37 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+//import PropTypes from 'prop-types';
+import axios from "axios";
+import Movie from "./Movie";
 
 class App extends React.Component{
   state = {
-    count : 0 
+    isLoading : true,
+    movies : []
+  };
+  getMovies = async() => {
+    const {data: {data : {movies}}} = await axios.get("https://yts-proxy.now.sh/list_movies.json?sort_by=rating");
+    this.setState({movies, isLoading : false});
+  };
+
+  // 처음에 render를 하면 호출되는 life sysle mothod는 componentDidMount임 
+  componentDidMount(){
+    this.getMovies();
+    //const movies = axios.get("https://yts-proxy.now.sh/list_movies.json");
   }
-
-  // 내부에 function을 만들꺼임...
-  add = () => {
-    //this.setState({count : 1});
-    //this.setState({count : this.state.count + 1});  // 이코드는 state에 의존하고있기때문에 좋은코드는 아님, 하나의 예시
-    this.setState(current => ({count : current.count + 1})); // 외부의 상태에 의존하지않는 가장좋은방법
-  };
-
-  minus = () => {
-    //this.setState({count : -1});
-    //this.setState({count : this.state.count - 1});
-    this.setState(current => ({count : current.count - 1}));
-  };
-
   render(){
+    const {isLoading, movies} = this.state; // div안에 {this.state.isLoading ?} 방식처럼 state를 계속부르지않기위해 정의내려줌
     return (
       <div>
-        <h1>count: {this.state.count}</h1>
-        <button onClick={this.add}>Add</button>
-        <button onClick={this.minus}>Minus</button>
+        {isLoading ? "Loading.." : movies.map(movie => (
+            <Movie 
+              key={movie.id}
+              id={movie.id} 
+              year={movie.year} 
+              title={movie.title} 
+              summary={movie.summary} 
+              poster={movie.medium_cover_image}
+            />
+        ))}
       </div>
     );
   }
