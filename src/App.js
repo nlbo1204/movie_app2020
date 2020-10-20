@@ -1,7 +1,7 @@
 import React from 'react';
-//import PropTypes from 'prop-types';
 import axios from "axios";
 import Movie from "./Movie";
+import "./App.css";
 
 class App extends React.Component{
   state = {
@@ -13,26 +13,36 @@ class App extends React.Component{
     this.setState({movies, isLoading : false});
   };
 
-  // 처음에 render를 하면 호출되는 life sysle mothod는 componentDidMount임 
   componentDidMount(){
     this.getMovies();
-    //const movies = axios.get("https://yts-proxy.now.sh/list_movies.json");
   }
   render(){
-    const {isLoading, movies} = this.state; // div안에 {this.state.isLoading ?} 방식처럼 state를 계속부르지않기위해 정의내려줌
+    const {isLoading, movies} = this.state; 
     return (
-      <div>
-        {isLoading ? "Loading.." : movies.map(movie => (
-            <Movie 
-              key={movie.id}
-              id={movie.id} 
-              year={movie.year} 
-              title={movie.title} 
-              summary={movie.summary} 
-              poster={movie.medium_cover_image}
-            />
-        ))}
-      </div>
+      <section className="container">
+        {isLoading 
+          ? (
+            <div className="loader">
+              <span className="loader_text">
+                Loding..
+              </span>
+            </div>
+         ) : ( 
+           <div className="movies">
+            {movies.map(movie => (
+              <Movie 
+                key={movie.id}
+                id={movie.id} 
+                year={movie.year} 
+                title={movie.title} 
+                summary={movie.summary} 
+                poster={movie.medium_cover_image}
+                genres={movie.genres}
+              />
+            ))}
+           </div>
+         )}
+      </section>
     );
   }
 }
